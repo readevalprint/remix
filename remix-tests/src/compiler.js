@@ -68,7 +68,7 @@ function compileFileOrFiles (filename, isDirectory, opts, cb) {
     let errors = (result.errors || []).filter((e) => e.type === 'Error' || e.severity === 'error')
     if (errors.length > 0) {
       if (!isBrowser) require('signale').fatal(errors)
-      return cb(new Error('errors compiling'))
+      return cb(result.errors)
     }
     cb(err, result.contracts)
   })
@@ -109,7 +109,7 @@ function compileContractSources (sources, importFileCb, opts, cb) {
     let errors = (result.errors || []).filter((e) => e.type === 'Error' || e.severity === 'error')
     if (errors.length > 0) {
       if (!isBrowser) require('signale').fatal(errors)
-      return cb(new Error('errors compiling'))
+      return cb(result.errors)
     }
     cb(err, result.contracts)
   })
