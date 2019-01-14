@@ -106,7 +106,7 @@ function runTest (testName, testObject, contractDetails, opts, testCallback, res
 
           for (let i in receipt.events) {
             let event = receipt.events[i]
-            if (event.raw.topics.indexOf(topic) >= 0) {
+            if (event.raw && event.raw.topics.indexOf(topic) >= 0) {
               var testEvent = web3.eth.abi.decodeParameters(['bool', 'string'], event.raw.data)
               if (!testEvent[0]) {
                   testCallback({type: 'testFailure', value: (func.name), time: time, errMsg: testEvent[1], context: testName, filename: testObject.filename})
@@ -114,7 +114,7 @@ function runTest (testName, testObject, contractDetails, opts, testCallback, res
               testPassed = false
               }
             } else {
-                testCallback({type: 'event', name: event.event, returnValues: event.returnValues})
+                testCallback({type: 'event', name: i, events: [].concat(event)})
             }
           }
 
