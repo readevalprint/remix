@@ -87,11 +87,11 @@ function runTest (testName, testObject, contractDetails, opts, testCallback, res
       method.call(sendParams).then((result) => {
         let time = Math.ceil((Date.now() - startTime) / 1000.0)
         if (result) {
-          testCallback({type: 'testPass', value: changeCase.sentenceCase(func.name), time: time, context: testName})
+          testCallback({type: 'testPass', value: func.name, time: time, context: testName})
           passingNum += 1
           timePassed += time
         } else {
-          testCallback({type: 'testFailure', value: changeCase.sentenceCase(func.name), time: time, errMsg: 'function returned false', context: testName})
+          testCallback({type: 'testFailure', value: func.name, time: time, errMsg: 'function returned false', context: testName})
           failureNum += 1
         }
         next()
@@ -102,23 +102,24 @@ function runTest (testName, testObject, contractDetails, opts, testCallback, res
           let time = Math.ceil((Date.now() - startTime) / 1000.0)
           let topic = Web3.utils.sha3('AssertionEvent(bool,string)')
 
-          let testPassed = false
+          let testPassed = true
 
           for (let i in receipt.events) {
             let event = receipt.events[i]
-            if (event.raw.topics.indexOf(topic) >= 0) {
+            if (event.raw && event.raw.topics.indexOf(topic) >= 0) {
               var testEvent = web3.eth.abi.decodeParameters(['bool', 'string'], event.raw.data)
               if (!testEvent[0]) {
-                testCallback({type: 'testFailure', value: changeCase.sentenceCase(func.name), time: time, errMsg: testEvent[1], context: testName})
+                  testCallback({type: 'testFailure', value: (func.name), time: time, errMsg: testEvent[1], context: testName, filename: testObject.filename})
                 failureNum += 1
-                return next()
+              testPassed = false
               }
-              testPassed = true
+            } else {
+                testCallback({type: 'event', name: i, events: [].concat(event)})
             }
           }
 
           if (testPassed) {
-            testCallback({type: 'testPass', value: changeCase.sentenceCase(func.name), time: time, context: testName})
+              testCallback({type: 'testPass', value: (func.name), time: time, context: testName, filename: testObject.filename})
             passingNum += 1
           }
 
@@ -135,6 +136,7 @@ function runTest (testName, testObject, contractDetails, opts, testCallback, res
     }
   }, function (error) {
     resultsCallback(error, {
+    context: testName,
       passingNum: passingNum,
       failureNum: failureNum,
       timePassed: timePassed

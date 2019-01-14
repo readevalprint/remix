@@ -27,7 +27,7 @@ const runTestSources = function (contractSources, testCallback, resultCallback, 
       })
     },
     function compile (next) {
-      Compiler.compileContractSources(contractSources, importFileCb, next)
+        Compiler.compileContractSources(contractSources, importFileCb, { accounts }, next)
     },
     function deployAllContracts (compilationResult, next) {
       Deployer.deployAll(compilationResult, web3, function (err, contracts) {

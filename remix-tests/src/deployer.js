@@ -39,7 +39,8 @@ function deployAll (compileResult, web3, callback) {
       next()
     },
     function determineContractsToDeploy (next) {
-      let contractsToDeploy = ['Assert']
+
+      let contractsToDeploy = []
       let allContracts = Object.keys(compiledObject)
 
       for (let contractName of allContracts) {
