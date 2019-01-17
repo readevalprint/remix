@@ -69,7 +69,7 @@ function runTest (testName, testObject, contractDetails, opts, testCallback, res
     signale.warn('TestsAccounts.getAccount(' + opts.accounts.length + ')')
   }
 
-  testCallback({type: 'contract', value: testName, filename: testObject.filename})
+  testCallback({type: 'contract', value: testName, filename: testObject.filename, contractDetails: contractDetails})
   async.eachOfLimit(runList, 1, function (func, index, next) {
     let sender
     if (func.signature) {

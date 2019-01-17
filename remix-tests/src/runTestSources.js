@@ -46,6 +46,17 @@ const runTestSources = function (contractSources, testCallback, resultCallback, 
         if (filename.indexOf('_test.sol') < 0) {
           continue
         }
+
+        var dict = compilationResult[filename]
+        var items = Object.keys(dict).map(function (key) {
+          return key
+        })
+
+         // Sort the array based on the second element
+        items.sort(function (first, second) {
+          return dict[first].evm.bytecode.sourceMap.split(':', 1) - dict[second].evm.bytecode.sourceMap.split(':', 1)
+        })
+
         Object.keys(compilationResult[filename]).forEach(contractName => {
           contractsToTestDetails.push(compilationResult[filename][contractName])
           contractsToTest.push(contractName)
